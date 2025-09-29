@@ -1,0 +1,35 @@
+DQN 전체 구조
+
+[시작] 환경, 네트워크, 하이퍼파라미터 초기화
+      ↓
+[매 에피소드] 상태 초기화
+      ↓
+[매 스텝]
+  - epsilon으로 행동 선택
+  - 행동 수행 → 다음 상태, 보상, 종료 여부
+  - 경험 저장
+  - 학습 (batch로 샘플링해서 Q값 업데이트)
+  - target_net 주기적으로 업데이트
+      ↓
+[종료 조건] 평균 보상 >= 200이면 중단
+
+
+
+state = [
+    0. X 좌표 (x_position),
+    1. Y 좌표 (y_position),
+    2. X 속도 (x_velocity),
+    3. Y 속도 (y_velocity),
+    4. 선체 각도 (lander_angle),
+    5. 각속도 (angular_velocity),
+    6. 왼쪽 다리 접지 여부 (bool: 0.0 or 1.0),
+    7. 오른쪽 다리 접지 여부 (bool: 0.0 or 1.0)
+]
+
+Action Space
+There are four discrete actions available:
+
+    0: do nothing
+    1: fire left orientation engine
+    2: fire main engine
+    3: fire right orientation engine
