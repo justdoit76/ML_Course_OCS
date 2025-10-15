@@ -11,7 +11,6 @@ print('Number of datasets:', m)
  
 plt.xlabel('Learning time')
 plt.ylabel('Score')
-plt.plot(X, y)
 plt.scatter(X, y, color='red')
 plt.show()
  

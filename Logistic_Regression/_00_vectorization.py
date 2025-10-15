@@ -37,6 +37,5 @@ X = np.array([[1,2],
 w = np.array([2,1]) # 1x2
 # -1은 원소갯수에 맞춰 자동으로 행 계산,생성
 w_col = w.reshape(-1, 1)
-
 y = X.dot(w_col)+1
 print(y)
