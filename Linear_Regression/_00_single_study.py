@@ -1,8 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
- 
+
+# 입력 데이터 X (1개의 특성)
+# [공부시간]
 X = np.array([1, 5, 10])
+# y, 실제성적
 y = np.array([10, 50, 100])
  
 m = X.shape[0]
