@@ -11,7 +11,7 @@ for r in range(len(X)):
         wx += X[r][c]*W[c]
     y.append(wx+b)
 
-# [3x2] X [1*2] => 1D array (no good)
+# [3x2] X [1X2] => 1D array (no good)
 print(y)
 
 

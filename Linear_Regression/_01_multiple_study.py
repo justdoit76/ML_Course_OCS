@@ -12,6 +12,8 @@ X = np.array([
     [9, 5, 0.9, 6, 3]
 ])
 
+
+print(X.shape)
 # y, 실제 성적
 y = np.array([40, 55, 70, 85, 95])
 
@@ -75,8 +77,9 @@ def gradient_descent(X, y, W, b, alpha, num_iters):
 
 # 초기값
 W = np.zeros(X.shape[1])
-b = 0
-alpha = 0.01
+print(W)
+b = 0.0
+alpha = 0.001
 num_iters = 1000
 
 # 학습
