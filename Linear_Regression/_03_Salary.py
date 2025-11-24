@@ -108,11 +108,11 @@ weight = model[0].weight.item()
 bias = model[0].bias.item()
 
 # X축 범위 설정
-x_line = np.linspace(test_X.min(), test_X.max(), 100)
+x_line = np.linspace(train_X.min(), train_X.max(), 100)
 y_line = weight * x_line + bias
 
 plt.figure(figsize=(8, 5))
-plt.scatter(test_X, test_y, color='red', label='Actual')
+plt.scatter(X, y, color='red', label='Actual')
 plt.scatter(test_X, y_pred, color='blue', label='Predicted')
 plt.plot(x_line, y_line, color='blue', label='Regression Line') 
 plt.legend()
