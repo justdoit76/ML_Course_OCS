@@ -21,6 +21,7 @@ df = pd.get_dummies(df)
 
 X = df.drop(y_label, axis=1).to_numpy().astype('float32')
 y = df[y_label].to_numpy().astype('float32')
+print(X)
 
 X_train,X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True)
 
