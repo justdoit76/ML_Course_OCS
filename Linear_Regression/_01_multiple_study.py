@@ -17,7 +17,12 @@ print(X.shape)
 # y, 실제 성적
 y = np.array([40, 55, 70, 85, 95])
 
-m, n = X.shape
+# Z score
+mu = np.mean(X, axis=0)
+sigma = np.std(X, axis=0)
+Xp = (X-mu)/sigma
+
+m, n = Xp.shape
 print(f"Dataset size: {m}, features: {n}")
 
 # 데이터 시각화
@@ -35,59 +40,22 @@ for i in range(n):
 plt.tight_layout()
 plt.show()
 
-# 비용 함수
-def compute_cost(X, y, W, b):
-    m = X.shape[0]
-    cost = 0
-    for i in range(m):
-        f_wb = np.dot(X[i], W) + b
-        cost += (f_wb - y[i]) ** 2
-    return cost / (2 * m)
-
-# 기울기 계산
-def compute_gradient(X, y, W, b):
-    m, n = X.shape
-    dj_dw = np.zeros(n)
-    dj_db = 0.0
-
-    for i in range(m):
-        f_wb = np.dot(X[i], W) + b
-        err = f_wb - y[i]
-        dj_dw += err * X[i]
-        dj_db += err
-
-    dj_dw /= m
-    dj_db /= m
-    return dj_dw, dj_db
-
-# 경사하강법
-def gradient_descent(X, y, W, b, alpha, num_iters):    
-    J_history = []
-
-    for i in range(num_iters):
-        dj_dw, dj_db = compute_gradient(X, y, W, b)
-        W -= alpha * dj_dw
-        b -= alpha * dj_db
-
-        if i % 100 == 0:
-            cost = compute_cost(X, y, W, b)
-            J_history.append(cost)
-            print(f"iter {i}: cost={cost:.4f}, w={W}, b={b:.4f}")
-    return W, b
+from Linear_Func import gradient_descent
 
 # 초기값
-W = np.zeros(X.shape[1])
+W = np.zeros(n)
 print(W)
 b = 0.0
-alpha = 0.001
-num_iters = 1000
+lr = 0.001
+epochs = 10000
+Lambda = 0
 
 # 학습
-w_final, b_final = gradient_descent(X, y, W, b, alpha, num_iters)
-print(f'Final w: {w_final}, Final b: {b_final}')
+W_final, b_final = gradient_descent(Xp, y, W, b, lr, epochs, Lambda)
+print(f'Final w: {np.round(W_final, 3)}, Final b: {b_final:.3f}')
 
 # 예측
-def predict(W, b, X):
+def predict(X, W, b):
     return np.dot(X, W) + b
 
 X_test = np.array([
@@ -99,6 +67,8 @@ X_test = np.array([
     [6, 7, 0.9, 4, 5],  # 테스트 입력 [공부시간, 수면시간, 출석률, 모의고사횟수, 스트레스]
 ])
 
-for x in X_test:
-    y_pred = predict(w_final, b_final, x)
-    print(f'X= {x[0]}, {x[1]}, {x[2]}, {x[3]}, {x[4]} y= {y_pred:.2f}')
+X_test_p = (X_test-mu)/sigma
+
+y_pred = predict(X_test_p, W_final, b_final)
+for i in range(len(X_test)):
+    print(f'X_test={X_test[i]} y_pred={y_pred[i]:.3f}')
