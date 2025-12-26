@@ -15,7 +15,6 @@ plt.plot(X, y)
 plt.scatter(X, y, color='red')
 plt.show()
 
-
 # init parameters
 W = np.zeros(n)
 b = 0
