@@ -25,13 +25,13 @@ def compute_gradient(X, y, W, b, Lambda=0):
 
 def gradient_descent(X, y, W, b, lr, epochs, Lambda=0):
     for i in range(epochs):
+        cost = compute_cost(X, y, W, b, Lambda)
         dj_dw, dj_db = compute_gradient(X, y, W, b, Lambda)
 
         W = W - lr * dj_dw
         b = b - lr * dj_db
 
         if i%100==0:
-            cost = compute_cost(X, y, W, b, Lambda)
             print(f'epoch={i}, W={np.round(W, 3)}, b={b:.3f}, cost={cost:.3f}')
 
     return W, b
