@@ -21,7 +21,6 @@ C = len(le.classes_)
 I = np.eye(C)
 y_onehot = I[y_int]
 
-
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y_onehot, test_size=0.2, shuffle=True)
 m, n = X_train.shape
@@ -29,8 +28,6 @@ m, n = X_train.shape
 # Z-score
 ss = StandardScaler()
 X_train_p = ss.fit_transform(X_train)
-
-
 
 #W = np.zeros((n, C))
 W = np.random.randn(n, C) * 0.01

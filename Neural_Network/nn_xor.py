@@ -35,7 +35,7 @@ b1 = np.zeros((1, hidden_dim))
 W2 = np.random.randn(hidden_dim, 1)
 b2 = np.zeros((1, 1))
 lr = 0.05
-epochs = 20000
+epochs = 30000
 
 y = y.reshape(-1, 1)
 

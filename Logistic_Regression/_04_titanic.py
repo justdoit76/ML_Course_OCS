@@ -51,7 +51,6 @@ bin_cat_cols = ['sex', 'adult_male', 'alone']
 mul_cat_cols = ['embarked', 'class', 'who', 'deck']
 
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-
 # 결측치를 확인하고 변환
 
 # 1.수치형
@@ -108,8 +107,10 @@ test_dl  = DataLoader(test_ds, batch_size=32, shuffle=True)
 # model
 import torch.nn as nn
 
+m, n = X_train.shape
+
 model = nn.Sequential(
-    nn.Linear(X.shape[1], 1),        
+    nn.Linear(n, 1),            
     # 출력층에 sigmoid를 쓰지 않은 이유는 BCEWithLogitsLoss가 이미 포함
 )
 
