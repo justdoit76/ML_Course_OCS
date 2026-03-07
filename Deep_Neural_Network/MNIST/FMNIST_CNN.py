@@ -1,43 +1,44 @@
 from torchvision.datasets import FashionMNIST
+from torchvision import transforms
+
+tf = transforms.ToTensor()
 
 fm_train = FashionMNIST(
     root='./data',
     train=True,
+    transform=tf,
     download=True
 )
 
 fm_test =  FashionMNIST(
     root='./data',
     train=False,
+    transform=tf,
     download=True
 )
 
 print( fm_train.data.shape )
 print( fm_train.targets.shape )
 
-# from MNIST_func import plot_MNIST
-# plot_MNIST(fm_train, 0, 40, 10)
+from MNIST_func import plot_MNIST
+plot_MNIST(fm_train, 0, 10)
 
 import torch
 import torch.nn as nn
-from torch.utils.data import TensorDataset, DataLoader
-
-X_train = fm_train.data.float().div(255).unsqueeze(1)
-y_train = fm_train.targets
+from torch.utils.data import DataLoader
 
 # cpu vs gpu
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-bt_size = 256
+bt_size = 128
 pin_mode = False
 print(f'device={device}')
 
 if torch.cuda.is_available():
-    bt_size *= 16
+    bt_size *= 2
     pin_mode = True
     print(f'gpu={torch.cuda.get_device_name()}')
 
-train_ds = TensorDataset(X_train, y_train)
-train_dl = DataLoader(train_ds, batch_size=bt_size, shuffle=True, pin_memory=True)
+train_dl = DataLoader(fm_train, batch_size=bt_size, shuffle=True, pin_memory=True)
 
 class CNN(nn.Module):
 
@@ -96,11 +97,7 @@ for i in range(epochs):
 model.eval()
 with torch.no_grad():
 
-    X_test = fm_test.data.float().div(255).unsqueeze(1)
-    y_test = fm_test.targets
-
-    test_ds = TensorDataset(X_test, y_test)
-    test_dl = DataLoader(test_ds, batch_size=128)
+    test_dl = DataLoader(fm_test, batch_size=128)
 
     cnt = 0
     for x_batch, y_batch in test_dl:
@@ -111,5 +108,5 @@ with torch.no_grad():
         A = torch.argmax(Z, dim=1)
         cnt += (A==y_batch).sum().item()
 
-    acc = cnt / len(test_ds)
+    acc = cnt / len(fm_test)
     print(f'Accuracy={acc:.3f}')
