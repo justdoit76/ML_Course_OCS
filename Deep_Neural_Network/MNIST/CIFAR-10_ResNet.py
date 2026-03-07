@@ -135,6 +135,11 @@ if __name__ == '__main__':
         
     model = ResNet_CIFAR().to(device)
     criterion = nn.CrossEntropyLoss()
+    # monentum : 이전의 기울기를 90% 기억
+    # v     = 0.9 * (이전 v) + (현재 gradient)
+    # w = w - lr * v
+
+    # weight_decay : L2 정규화, 람다와 같다 0.005
     optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=5e-4)
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 150], gamma=0.1)
     epochs = 200
