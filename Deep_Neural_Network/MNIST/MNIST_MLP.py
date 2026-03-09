@@ -1,11 +1,14 @@
 import torch
-from torchvision import datasets
-from torch.utils.data import TensorDataset, DataLoader
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+tf = transforms.ToTensor()
 
 # import dataset
 train_mnist = datasets.MNIST(
     root='./data',
     train=True,
+    transform=tf,
     download=True,        
 )
 
@@ -16,51 +19,42 @@ print(train_mnist.targets.shape)
 test_mnist = datasets.MNIST(
     root='./data',
     train=False,
+    transform=tf,
     download=True,        
 )
-
-from MNIST_func import plot_MNIST
-plot_MNIST(train_mnist, 0, 10)
-
-# data, (60000, 28, 28) :  (0~255) -> (0~1)
-X_train = train_mnist.data.float().div(255).flatten(1)
-y_train = train_mnist.targets
-
-X_test  = test_mnist.data.float().div(255).flatten(1)
-y_test  = test_mnist.targets
-
-train_ds = TensorDataset(X_train, y_train)
-test_ds  = TensorDataset(X_test, y_test)
 
 # from google.colab import files
 # files.upload()
 
+from MNIST_func import plot_MNIST
+plot_MNIST(train_mnist, 0, 10)
+
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f'using device={device}')
 
-bt_size = 256
+bt_size = 128
 use_pin = False
 
 if torch.cuda.is_available():
-    bt_size *= 16
+    bt_size *= 2
     use_pin = True
     print(torch.cuda.get_device_name(0))
 
-train_dl = DataLoader(train_ds, batch_size=bt_size, shuffle=True, pin_memory=use_pin, num_workers=0)
-test_dl  = DataLoader(test_ds, batch_size=64)
+train_dl = DataLoader(train_mnist, batch_size=bt_size, shuffle=True, pin_memory=use_pin, num_workers=0)
+test_dl  = DataLoader(test_mnist, batch_size=64)
 
 import torch.nn as nn
-m, n = X_train.shape
-print(m, n)
 C = 10
-
-model = nn.Sequential(    
-    nn.Linear(n, C),
+BS, H, W = train_mnist.data.shape
+model = nn.Sequential(   
+    nn.Flatten(), 
+    nn.Linear(H*W, C),
 ).to(device)
 
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-epochs = 100
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+epochs = 15
 
 for i in range(epochs):
     model.train()
@@ -79,10 +73,8 @@ for i in range(epochs):
 
         cost += loss.item()
 
-    cost /= len(train_dl)
-
-    if i%10==0:        
-        print(f'epoch={i}, cost={cost:.3f}')
+    cost /= len(train_dl)    
+    print(f'epoch={i}, cost={cost:.3f}')
 
 # predict
 model.eval()
@@ -97,5 +89,5 @@ with torch.no_grad():
 
         cnt += (A==y_batch).sum().item()
 
-    accuracy = cnt / len(test_ds)
+    accuracy = cnt / len(test_mnist)
     print(f'Accuracy={accuracy:.3f}')

@@ -35,6 +35,9 @@ cf_test = CIFAR10(
 
 print(cf_train.data.shape)
 
+# from google.colab import files
+# files.upload()
+
 # from MNIST_func import plot_CIFAR10
 # plot_CIFAR10(cf_train, 0, 20)
 

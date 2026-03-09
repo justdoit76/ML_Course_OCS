@@ -1,41 +1,45 @@
 from torchvision.datasets import MNIST
+from torchvision import transforms
+
+tf = transforms.ToTensor()
 
 mnist_train = MNIST(
     root='./data',
     train=True,
+    transform=tf,
     download=True
 )
 
 mnist_test = MNIST(
     root='./data',
     train=False,
+    transform=tf,
     download=True
 )
 
-#from MNIST_func import plot_MNIST
-#plot_MNIST(mnist_train, 0, 20)
+# from google.colab import files
+# files.upload()
+
+from MNIST_func import plot_MNIST, plot_MNIST_Neurons
+plot_MNIST(mnist_train, 0, 20)
 
 import torch
 import torch.nn as nn
 from torch.utils.data import TensorDataset, DataLoader
 
-X_train = mnist_train.data.float().div(255).unsqueeze(1)
-y_train = mnist_train.targets
-
 # cuda or cpu
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-bt_size = 256
+bt_size = 128
 pin_mode = False
 
 print(f'device={device}')
 
 if torch.cuda.is_available():
-    bt_size*=16
+    bt_size*=2
     pin_mode = True
     print(f'cuda={torch.cuda.get_device_name()}')
 
-train_ds = TensorDataset(X_train, y_train)
-train_dl = DataLoader(train_ds, batch_size=bt_size, shuffle=True, pin_memory=pin_mode)
+train_dl = DataLoader(mnist_train, batch_size=bt_size, shuffle=True, pin_memory=pin_mode)
 
 class CNN(nn.Module):
 
@@ -95,12 +99,11 @@ for i in range(epochs):
 # predict
 model.eval()
 with torch.no_grad():
-    X_test = mnist_test.data.float().div(255).unsqueeze(1)
-    y_test = mnist_test.targets
+    img, label = mnist_test[0]
+    print(img.shape)
+    plot_MNIST_Neurons(model, img, device)
 
-    test_ds = TensorDataset(X_test, y_test)
-    test_dl = DataLoader(test_ds, batch_size=256, pin_memory=pin_mode)
-
+    test_dl = DataLoader(mnist_test, batch_size=128)
     cnt=0
 
     for x_batch, y_batch in test_dl:
@@ -112,7 +115,5 @@ with torch.no_grad():
 
         cnt += (A==y_batch).sum().item()
 
-    acc = cnt / len(test_ds)
+    acc = cnt / len(mnist_test)
     print(f'Accuracy={acc:.3f}')
-
-

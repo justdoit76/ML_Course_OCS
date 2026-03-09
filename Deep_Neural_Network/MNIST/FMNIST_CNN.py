@@ -20,7 +20,10 @@ fm_test =  FashionMNIST(
 print( fm_train.data.shape )
 print( fm_train.targets.shape )
 
-from MNIST_func import plot_MNIST
+# from google.colab import files
+# files.upload()
+
+from MNIST_func import plot_MNIST, plot_MNIST_Neurons
 plot_MNIST(fm_train, 0, 10)
 
 import torch
@@ -96,6 +99,8 @@ for i in range(epochs):
 # predict
 model.eval()
 with torch.no_grad():
+    img, label = fm_test[0]
+    plot_MNIST_Neurons(model, img, device)
 
     test_dl = DataLoader(fm_test, batch_size=128)
 

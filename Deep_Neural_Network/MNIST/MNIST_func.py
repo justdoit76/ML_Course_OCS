@@ -32,9 +32,9 @@ def plot_MNIST(dataset, start, end, cols=5):
     plt.tight_layout()
     plt.show()
 
-def plot_MNIST_Neurons(model, X_test, device):
-    # 테스트 이미지 하나 선택
-    x = X_test[0].unsqueeze(0).to(device)
+def plot_MNIST_Neurons(model, img, device):    
+    x = img.unsqueeze(0).to(device)
+    print(x.shape)
 
     with torch.no_grad(): 
         # input x -> (batch, channel, H, W) = (1, 1, 28, 28)
@@ -57,7 +57,7 @@ def plot_MNIST_Neurons(model, X_test, device):
     # 입력 이미지
     plt.figure(figsize=(3,3))
     plt.title("Input Image")
-    plt.imshow(x[0,0], cmap='gray')
+    plt.imshow(x[0,0].cpu().numpy(), cmap='gray')
     plt.axis('off')
     plt.show()
     
@@ -66,7 +66,7 @@ def plot_MNIST_Neurons(model, X_test, device):
     fig.suptitle("Conv1 Feature Maps")
 
     for i, ax in enumerate(axes.flat):
-        ax.imshow(conv1[0,i], cmap='gray')
+        ax.imshow(conv1[0,i].cpu().numpy(), cmap='gray')
         ax.axis('off')
 
     plt.show()
@@ -76,36 +76,7 @@ def plot_MNIST_Neurons(model, X_test, device):
     fig.suptitle("Conv2 Feature Maps")
 
     for i, ax in enumerate(axes.flat):
-        ax.imshow(conv2[0,i], cmap='gray')
+        ax.imshow(conv2[0,i].cpu().numpy(), cmap='gray')
         ax.axis('off')
 
-    plt.show()
-
-def plot_CIFAR10(dataset, start, end, cols=5):
-    n = end - start
-    rows = math.ceil(n / cols)
-
-    fig, axes = plt.subplots(rows, cols, figsize=(cols*2, rows*2))
-    axes = axes.flatten()
-
-    for i in range(start, end):
-        img, label = dataset[i]
-        j = i - start   
-
-        # Tensor → numpy
-        if isinstance(img, torch.Tensor):
-            img = img.numpy()
-
-        # (C,H,W) → (H,W,C)
-        img = img.transpose(1, 2, 0)
-
-        axes[j].imshow(img)
-        axes[j].set_title(str(label))
-        axes[j].axis('off')
-
-    # 남는 subplot 숨기기
-    for j in range(n, len(axes)):
-        axes[j].axis('off')
-
-    plt.tight_layout()
     plt.show()

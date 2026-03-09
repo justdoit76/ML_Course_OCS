@@ -23,8 +23,11 @@ print(len(cifar_train.targets))
 img, label = cifar_train[0]
 print(img.shape, label)
 
-# from MNIST_func import plot_CIFAR10
-# plot_CIFAR10(cifar_train, 0, 20)
+# from google.colab import files
+# files.upload()
+
+from CIFAR10_func import plot_CIFAR10, plot_CIFAR10_Neurons
+plot_CIFAR10(cifar_train, 0, 20)
 
 from torch.utils.data import DataLoader
 import torch
@@ -79,7 +82,7 @@ class CNN(nn.Module):
 model = CNN().to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam( model.parameters(), lr=0.001)
-epochs = 20
+epochs = 10
 
 for i in range(epochs):
     model.train()
@@ -104,6 +107,10 @@ for i in range(epochs):
 # predict
 model.eval()
 with torch.no_grad():
+    img, label = cifar_train[0]
+    print(img.shape)
+    plot_CIFAR10_Neurons(model, img, device)
+
     test_dl = DataLoader(cifar_test, batch_size=128)
     cnt = 0
 
