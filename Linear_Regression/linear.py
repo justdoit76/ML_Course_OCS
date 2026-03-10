@@ -33,7 +33,7 @@ lr = 0.002
 epochs = 3000
 Lambda = 0
 
-from linear_func import gradient_descent
+from Linear_Func import gradient_descent
 W_final, b_final = gradient_descent(X_train_p, y_train, W, b, lr, epochs, Lambda)
 
 def predict(X, W, b):
