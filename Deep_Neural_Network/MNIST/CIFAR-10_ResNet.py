@@ -72,8 +72,15 @@ if __name__ == '__main__':
                 nn.BatchNorm2d(out_ch)
             )
             
-            # Shortcut: 입력과 출력의 크기/채널이 다를 때 맞춰주는 1x1 Conv
+            # 논문의 identity shortcut, 항등행렬()
+            # out = F(x) + x
             self.shortcut = nn.Sequential()
+
+            # 입력과 출력의 크기/채널이 다를 때 맞춰주는 1x1 Conv             
+            # out = self.conv(x)는 F(x)
+            # out += shortcut(x)는 skip, F(x) + x 를 위해 텐서간 (C, H, W) 가 같아야 함            
+            # Case1 : stride=2, Fx=(64, 16, 16), x=(64, 32, 32) 더할 수 없음
+            # Case2 : in_ch!=out_ch & stride=1, F(x)=(128, 32, 32), x=(64, 32, 32),  더할 수 없음
 
             if stride != 1 or in_ch != out_ch:
                 self.shortcut = nn.Sequential(
@@ -119,12 +126,15 @@ if __name__ == '__main__':
             self.fc = nn.Linear(64, 10)
 
         def _make_layer(self, out_ch, num_blocks, stride):
+             # stage1 (out_ch=16, num_blocks=3, stride=1) = [1] + [1] * (3 - 1) = [1, 1, 1]
+             # stage2 (out_ch=32, num_blocks=3, stride=2) = [2] + [1] * (3 - 1) = [2, 1, 1]
+             # stage3 (out_ch=64, num_blocks=3, stride=2) = [2] + [1] * (3 - 1) = [2, 1, 1]
             strides = [stride] + [1] * (num_blocks - 1)
             layers = []
             for s in strides:
                 layers.append(ResidualBlock(self.in_ch, out_ch, s))
                 self.in_ch = out_ch
-            return nn.Sequential(*layers)
+            return nn.Sequential(*layers) # *:unpacking Sequential(layer1, layer2, layer2)
 
         def forward(self, x):
             x = self.conv1(x)
