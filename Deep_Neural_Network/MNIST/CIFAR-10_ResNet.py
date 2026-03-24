@@ -148,6 +148,7 @@ if __name__ == '__main__':
         
     model = ResNet_CIFAR().to(device)
     criterion = nn.CrossEntropyLoss()
+
     # monentum : 이전의 기울기를 90% 기억
     # v     = 0.9 * (이전 v) + (현재 gradient)
     # w = w - lr * v
@@ -177,7 +178,7 @@ if __name__ == '__main__':
         scheduler.step()
         current_lr = scheduler.get_last_lr()[0]
         cost /= len(train_dl)
-        print(f'epoch={i}, cost={cost:.3f}, lr={current_lr}')    
+        print(f'epoch={i}, cost={cost:.3f}, lr={current_lr:.3f}')    
 
     # predict
     model.eval()
