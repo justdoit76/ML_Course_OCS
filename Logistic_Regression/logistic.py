@@ -35,7 +35,7 @@ plt.plot(X_range, y_range, color='blue', linewidth=2, label='Logistic Curve')
 
 # 결정 경계선(확률 0.5 지점)
 plt.axhline(y=0.5, color='gray', linestyle='--', label='Threshold (0.5)')
-plt.axvline(x=-b/W if W != 0 else 0, color='green', linestyle=':', label='Decision Boundary')
+plt.axvline(x=-b_final/W_final if W_final != 0 else 0, color='green', linestyle=':', label='Decision Boundary')
 
 # 테스트 포인트 (5시간 지점 표시)
 y_test = predict(X_test, W_final, b_final)
