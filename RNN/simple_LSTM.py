@@ -24,7 +24,7 @@ y = torch.tensor([y_data])
 print(x)
 
 # 2. 모델 정의
-class SimpleRNN(nn.Module):
+class SimpleLSTM(nn.Module):
     def __init__(self,vocab_size, embedding_dim):
         super().__init__()
         hidden_size = 20
@@ -34,18 +34,18 @@ class SimpleRNN(nn.Module):
 
         # embedding_dim: 단어를 표현하는 벡터 차원
         # hidden_size: 지금까지 읽은 문맥을 저장하는 벡터 차원         
-        self.rnn = nn.RNN(input_size=embedding_dim, hidden_size=hidden_size, batch_first=True)
+        self.lstm = nn.LSTM(input_size=embedding_dim, hidden_size=hidden_size, batch_first=True)
 
         self.fc = nn.Linear(hidden_size, vocab_size)
 
     def forward(self, x):        
-        x = self.embedding(x)          # in(1, 4), out(1, 4, 10)
+        x = self.embedding(x)           # in(1, 4), out(1, 4, 10)
         # 중요:RNN은 3차원 텐서를 입력받음 (batch, sequence, feature)        
-        out, h_n = self.rnn(x)         # in(1, 4, 10), out(1, 4, 20), h_n은 마지막 hidden state
-        out = self.fc(out)             # in(1, 4, 20), out(1, 4, 4)
+        out, (h_n, c_n) = self.lstm(x)  # in(1, 4, 10), out(1, 4, 20), h_n:last hidden state, c_n:last cell state
+        out = self.fc(out)              # in(1, 4, 20), out(1, 4, 4)
         return out
 
-model = SimpleRNN(vocab_size, embedding_dim)
+model = SimpleLSTM(vocab_size, embedding_dim)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 epochs = 300
